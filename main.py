@@ -50,9 +50,6 @@ class Game:
         self.projectiles = pygame.sprite.Group()
 
         self.enemy = Enemy(WINDOW_WIDTH // 1.25, WINDOW_HEIGHT //3, WINDOW_WIDTH, WINDOW_HEIGHT)
-        # Initialize sound
-        self.sound = Sound()
-        self.sound.background()  # Start playing music here
 
         self.button_scale = 1.0  # Initial scale of the button
         self.scale_speed = 0.1  # Speed of scaling
@@ -122,6 +119,7 @@ class Game:
 
         # Button details
         button_x, button_y, button_w, button_h = (WINDOW_WIDTH - 200) // 2, (WINDOW_HEIGHT - 70) // 2, 200, 70
+        button_sound = pygame.mixer.Sound('game-start.mp3')
 
         # Get mouse position and state
         mouse_pos = pygame.mouse.get_pos()
@@ -136,6 +134,7 @@ class Game:
         # Handle button click
         if button_hover and mouse_click[0]:
             self.currentLine = 0
+            button_sound.play()
             self.current_state = DIALOGUE
 
         pygame.display.flip()
@@ -170,6 +169,9 @@ class Game:
                 if event.key == pygame.K_SPACE and self.current_state == DIALOGUE:
                     self.currentLine += 1
                     if self.currentLine >= len(self.dialogueText):
+                        # Initialize sound
+                        self.sound = Sound()
+                        self.sound.background()  # Start playing music here
                         self.current_state = GAMEPLAY
                 if event.key == pygame.K_SPACE and self.current_state == GAMEPLAY:
                     self.wizard.sendBasicProj(self.projectiles)
