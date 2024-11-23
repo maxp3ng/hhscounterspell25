@@ -1,6 +1,7 @@
 import pygame
 import sys
 from wizard import Wizard
+from enemy import Enemy
 
 # Initialize Pygame
 pygame.init()
@@ -28,6 +29,9 @@ class Game:
         # Create the player at the center of the screen
         self.wizard = Wizard(WINDOW_WIDTH // 4, WINDOW_HEIGHT // 3)
         self.projectiles = pygame.sprite.Group()
+
+        self.enemy = Enemy(WINDOW_WIDTH // 1.25, WINDOW_HEIGHT //3)
+        self.projectiles = pygame.sprite.Group()
         
         # Game state
         self.running = True
@@ -50,11 +54,14 @@ class Game:
     def update(self):
         """Update game state"""
         self.wizard.update()
+        self.enemy.update()
         self.projectiles.update() 
     
     def render(self):
         """Render the game state to the screen"""
         self.screen.fill(WHITE)
+        
+        self.enemy.draw(self.screen)
         
         self.wizard.draw(self.screen)
         for projectile in self.projectiles:

@@ -4,7 +4,7 @@ import os
 import random
 
 file_path = "tempsong.txt" 
-file = open(file_path, "r")
+file = open(file_path)
 
 WINDOW_WIDTH = 800
 WINDOW_HEIGHT = 600
@@ -44,12 +44,12 @@ class Enemy(pygame.sprite.Sprite):
         """Update player position based on keyboard input"""
         keys = pygame.key.get_pressed()
         frameslowdown = 4 #wait 5 ticks on each frame 
-        char = self.read_next_character(file)
-        self.enemyProj(self, char)
+        #char = self.read_next_character(file)
+        #self.enemyProj(self, char)
         if (self.fireframe > 0):
             filename = 'frame_' + str(int(self.fireframe//frameslowdown))+ '.gif'
-            wizardsurf = pygame.image.load(os.path.join('static', 'img', 'wizardfire' , filename))
-            self.image = wizardsurf
+            enemysurf = pygame.image.load(os.path.join('static', 'img', 'enemyfire' , filename))
+            self.image = enemysurf
             self.fireframe = 0 if (self.fireframe == 7*frameslowdown) else self.fireframe + 1
             
            
