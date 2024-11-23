@@ -19,14 +19,16 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 BG_COLOR_TOP = (60, 120, 180)
 BG_COLOR_BOTTOM = (30, 60, 90)
-BUTTON_COLOR = (255, 255, 255)
-BUTTON_HOVER_COLOR = (200, 200, 200)
+BUTTON_COLOR = (0,0,0)
+BUTTON_HOVER_COLOR = (0,0,0)
 TEXT_COLOR = (255, 51, 139)
 
 #Screen State
 MAIN_MENU = 0
 DIALOGUE = 1
 GAMEPLAY = 2
+ATTRIBUTIONS = 3
+SONGS = 4
 
 currentState =  MAIN_MENU
 
@@ -75,14 +77,17 @@ class Game:
             )
             pygame.draw.line(self.screen, color, (0, y), (WINDOW_WIDTH, y))
 
-    def draw_button(self, x, y, w, h, text, hover):
-        """Draw the start button"""
+    def draw_button(self, x, y, w, h, text, hover, font_size=40, button_scale=1.0):
+        """Draw a button with customizable font size and button scale"""
         color = BUTTON_HOVER_COLOR if hover else BUTTON_COLOR
         pygame.draw.rect(self.screen, color, (x, y, w, h), border_radius=10)
-        button_text = FONT.render(text, True, TEXT_COLOR)
+    
+        # Use the font size provided for rendering text
+        button_font = pygame.font.Font("MightySouly-lxggD.ttf", font_size)
+        button_text = button_font.render(text, True, TEXT_COLOR)
         self.screen.blit(button_text, (x + (w - button_text.get_width()) // 2, y + (h - button_text.get_height()) // 2))
-        """Draw the start button with smooth hover enlargement"""
-        # Adjust scale factor for smooth transitions
+
+        # Adjust the scaling of the button for smooth transitions
         target_scale = 1.1 if hover else 1.0
         self.button_scale += (target_scale - self.button_scale) * self.scale_speed
 
@@ -93,20 +98,14 @@ class Game:
         scaled_y = y - (scaled_h - h) // 2
 
         # Draw the button with the scaled dimensions
-        color = BUTTON_HOVER_COLOR if hover else BUTTON_COLOR
         pygame.draw.rect(self.screen, color, (scaled_x, scaled_y, scaled_w, scaled_h), border_radius=10)
 
-        # Adjust font size based on scale
-        font_size = int(40 * self.button_scale)
-        button_font = pygame.font.Font("MightySouly-lxggD.ttf", font_size)
-
-        # Render the text and center it on the button
+        # Render the text on the scaled button
         button_text = button_font.render(text, True, TEXT_COLOR)
         text_x = scaled_x + (scaled_w - button_text.get_width()) // 2
         text_y = scaled_y + (scaled_h - button_text.get_height()) // 2
         self.screen.blit(button_text, (text_x, text_y))
-        text_y = y + (h - button_text.get_height()) // 2
-        self.screen.blit(button_text, (text_x, text_y))
+
 
 
     def main_menu(self):
@@ -122,6 +121,7 @@ class Game:
 
         # Button details
         button_x, button_y, button_w, button_h = (WINDOW_WIDTH - 200) // 2, (WINDOW_HEIGHT - 70) // 2, 200, 70
+        attribution_x, attribution_y, attribution_w, attribution_h = (WINDOW_WIDTH - 200) // 2, (WINDOW_HEIGHT - 20) // 2 + 100, 200, 70
 
         # Get mouse position and state
         mouse_pos = pygame.mouse.get_pos()
@@ -129,16 +129,25 @@ class Game:
 
         # Check if mouse is over the button
         button_hover = button_x < mouse_pos[0] < button_x + button_w and button_y < mouse_pos[1] < button_y + button_h
-        
+        attribution_button_hover = attribution_x < mouse_pos[0] < attribution_x + attribution_w and attribution_y < mouse_pos[1] < attribution_y + attribution_h
+    
         # Draw Start button
         self.draw_button(button_x, button_y, button_w, button_h, "Start", button_hover)
-        
-        # Handle button click
+    
+        # Draw Attributions button with smaller font size and scale
+        self.draw_button(attribution_x, attribution_y, attribution_w, attribution_h, "Credits", attribution_button_hover, font_size=30, button_scale=0.8)
+    
+        # Handle button clicks
         if button_hover and mouse_click[0]:
             self.currentLine = 0
             self.current_state = DIALOGUE
+        elif attribution_button_hover and mouse_click[0]:
+            self.current_state = ATTRIBUTIONS
 
         pygame.display.flip()
+
+    
+
 
     def dialogue(self):
         self.dialogueText = [
@@ -207,6 +216,41 @@ class Game:
             self.wizard.draw(self.screen)
             for projectile in self.projectiles:
                 projectile.draw(self.screen) 
+        elif self.current_state == ATTRIBUTIONS:
+            self.screen.fill(BLACK)  # Background color for the Attributions screen
+    
+            # Display attributions text
+            attribution_text = [
+                "Game Developed by: Max Peng, Dimian Luo, and Alan Chau",
+                "Music: Music from #Uppbeat (License code: ZJIAMNPTKDKDIECJ), and APT by Bruno Mars and Rose",
+            ]
+    
+            font = pygame.font.Font(None, 40)
+            y_offset = 100  # Starting y position for the text
+            for line in attribution_text:
+                text_surface = font.render(line, True, WHITE)
+                text_rect = text_surface.get_rect(center=(WINDOW_WIDTH // 2, y_offset))
+                self.screen.blit(text_surface, text_rect)
+                y_offset += 50  # Space between lines
+
+         # Add a back button
+        back_button_x, back_button_y, back_button_w, back_button_h = 50, 50, 200, 70
+        mouse_pos = pygame.mouse.get_pos()
+        mouse_click = pygame.mouse.get_pressed()
+
+        # Check hover and draw the back button
+        back_hover = (
+            back_button_x < mouse_pos[0] < back_button_x + back_button_w
+            and back_button_y < mouse_pos[1] < back_button_y + back_button_h
+        )
+        self.draw_button(back_button_x, back_button_y, back_button_w, back_button_h, "Back", back_hover)
+
+        # Handle back button click
+        if back_hover and mouse_click[0]:
+            self.current_state = MAIN_MENU
+
+        pygame.display.flip()
+
 
         pygame.display.flip()
     
