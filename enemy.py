@@ -15,9 +15,9 @@ class Enemy(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
         # Create a simple rectangle for the player
-        wizardsurf = pygame.image.load(os.path.join('static', 'img', 'wizardfire' , 'frame_0.gif'))
+        enemysurf = pygame.image.load(os.path.join('static', 'img', 'enemyfire' , 'frame_0_delay-0.1s.gif'))
         self.fireframe = 0
-        self.image = wizardsurf
+        self.image = enemysurf
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y

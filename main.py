@@ -1,15 +1,16 @@
 import pygame
 import sys
 from wizard import Wizard
-from sound import Sound
 
 # Initialize Pygame
 pygame.init()
 
 # Constants
-WINDOW_WIDTH = 800
-WINDOW_HEIGHT = 600
-FPS = 60 
+info = pygame.display.Info()
+WINDOW_WIDTH = info.current_w
+WINDOW_HEIGHT = info.current_h
+screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT), pygame.FULLSCREEN)
+FPS = 60
 
 # Colors
 BLACK = (0, 0, 0)
@@ -19,7 +20,7 @@ class Game:
     def __init__(self):
         # Create the game window
         self.screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
-        pygame.display.set_caption("Counterspell")
+        pygame.display.set_caption("Counterspell")  
         
         # Set up the game clock
         self.clock = pygame.time.Clock()
@@ -27,10 +28,6 @@ class Game:
         # Create the player at the center of the screen
         self.wizard = Wizard(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2)
         self.projectiles = pygame.sprite.Group()
-        
-        # Initialize sound and start background music
-        self.sound = Sound()
-        self.sound.background()  # Start background music here
         
         # Game state
         self.running = True
@@ -40,13 +37,15 @@ class Game:
         """Handle game events like keyboard input and window closing"""
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                self.running = False
+                pygame.quit()
+                sys.exit()
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    self.running = False
-                if event.key == pygame.K_SPACE:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.KEYDOWN:
                     self.wizard.sendBasicProj(self.projectiles)
-                    self.wizard.fireframe = (self.wizard.fireframe) if (self.wizard.fireframe > 0) else 1
+
                     
     def update(self):
         """Update game state"""
