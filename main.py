@@ -19,6 +19,11 @@ FPS = 60
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 BG_COLOR_TOP = (60, 120, 180)
+# Colors
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+BG_COLOR_TOP = (60, 120, 180)
+
 BG_COLOR_BOTTOM = (30, 60, 90)
 BUTTON_COLOR = (0,0,0)
 BUTTON_HOVER_COLOR = (0,0,0)
@@ -183,10 +188,9 @@ class Game:
                         self.sound = Sound()
                         self.sound.background()  # Start playing music here
                         self.current_state = GAMEPLAY
+                        self.time = 0
                 if event.key == pygame.K_SPACE and self.current_state == GAMEPLAY:
                     self.wizard.sendBasicProj(self.projectiles)
-
-
     def checkCollisions(self, time, projectiles):
         """Improved collision detection system"""
         # Create groups for different projectile types
@@ -200,37 +204,27 @@ class Game:
             elif proj.projType == "fireball_head":
                 player_projectiles.append(proj)
         
-        # Check collisions between groups
+        # Check if player projectiles hit the enemy
+        if self.enemy.alive():
+            for player_proj in player_projectiles:
+                if player_proj.alive():
+                    # Use the enemy's hitbox for more precise collision
+                    if player_proj.rect.colliderect(self.enemy.hitbox):
+                        print("Enemy hit!")  # Debug print
+                        pygame.quit()
+                        self.enemy.kill()
+                        player_proj.kill()
+                        return  # Exit after enemy dies
+        
+        # Check collisions between projectile groups
         for enemy_proj in enemy_projectiles:
             for player_proj in player_projectiles:
-                # First check if projectiles still exist (haven't been destroyed)
                 if enemy_proj.alive() and player_proj.alive():
-                    # Check for collision using rect
                     if enemy_proj.rect.colliderect(player_proj.rect):
-                        # Play collision sound if you have one
-                        # self.sound.play_collision()
-                        
-                        # Optional: Create visual effect at collision point
-                        collision_x = (enemy_proj.rect.centerx + player_proj.rect.centerx) // 2
-                        collision_y = (enemy_proj.rect.centery + player_proj.rect.centery) // 2
-                        
-                        # Kill both projectiles
                         enemy_proj.kill()
                         player_proj.kill()
-                        
-                        # Optional: Add score or trigger other game events
-                        # self.score += 10
-                        
-        # Optional: Screen boundary cleanup
-        for proj in projectiles:
-            if proj.alive():  # Check if projectile still exists
-                # Remove projectiles that go off screen
-                if (proj.rect.right < 0 or 
-                    proj.rect.left > self.screen.get_width() or
-                    proj.rect.bottom < 0 or 
-                    proj.rect.top > self.screen.get_height()):
-                    proj.kill()
-                    
+
+
     def update(self, time, projectiles):
         """Update game state"""
         if self.current_state == GAMEPLAY:
@@ -238,12 +232,6 @@ class Game:
             self.enemy.update(time, projectiles)
             self.projectiles.update()
             self.checkCollisions(time, projectiles)
-            if self.current_state == GAMEPLAY:
-                self.wizard.update()
-                self.enemy.update(time, projectiles)
-                self.projectiles.update()
-                self.checkCollisions(time, projectiles)
-                self.collision_effects.update()
     
     def render(self):
         """Render the game state to the screen"""
