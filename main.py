@@ -1,6 +1,7 @@
 import pygame
 import sys
 from wizard import Wizard
+from sound import Sound
 from enemy import Enemy
 
 # Initialize Pygame
@@ -16,6 +17,21 @@ FPS = 60
 # Colors
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
+BG_COLOR_TOP = (60, 120, 180)
+BG_COLOR_BOTTOM = (30, 60, 90)
+BUTTON_COLOR = (255, 255, 255)
+BUTTON_HOVER_COLOR = (200, 200, 200)
+TEXT_COLOR = (0, 0, 0)
+
+#Screen State
+MAIN_MENU = 0
+DIALOGUE = 1
+GAMEPLAY = 2
+
+currentState =  MAIN_MENU
+
+# Fonts
+FONT = pygame.font.Font(pygame.font.get_default_font(), 40)
 
 class Game:
     def __init__(self):
@@ -32,13 +48,57 @@ class Game:
         self.projectiles = pygame.sprite.Group()
 
         self.enemy = Enemy(WINDOW_WIDTH // 1.25, WINDOW_HEIGHT //3, WINDOW_WIDTH, WINDOW_HEIGHT)
-        self.projectiles = pygame.sprite.Group()
+        # Initialize sound
+        self.sound = Sound()
+        self.sound.background()  # Start playing music here
+
         
         # Game state
         self.running = True
         self.time = 0
+        self.current_state = MAIN_MENU
 
     
+    def draw_gradient(self):
+        """Draw a gradient background"""
+        for y in range(WINDOW_HEIGHT):
+            color = (
+                BG_COLOR_TOP[0] + (BG_COLOR_BOTTOM[0] - BG_COLOR_TOP[0]) * y // WINDOW_HEIGHT,
+                BG_COLOR_TOP[1] + (BG_COLOR_BOTTOM[1] - BG_COLOR_TOP[1]) * y // WINDOW_HEIGHT,
+                BG_COLOR_TOP[2] + (BG_COLOR_BOTTOM[2] - BG_COLOR_TOP[2]) * y // WINDOW_HEIGHT,
+            )
+            pygame.draw.line(self.screen, color, (0, y), (WINDOW_WIDTH, y))
+
+    def draw_button(self, x, y, w, h, text, hover):
+        """Draw the start button"""
+        color = BUTTON_HOVER_COLOR if hover else BUTTON_COLOR
+        pygame.draw.rect(self.screen, color, (x, y, w, h), border_radius=10)
+        button_text = FONT.render(text, True, TEXT_COLOR)
+        self.screen.blit(button_text, (x + (w - button_text.get_width()) // 2, y + (h - button_text.get_height()) // 2))
+
+    def main_menu(self):
+        """Display the main menu"""
+        self.draw_gradient()
+
+        # Button details
+        button_x, button_y, button_w, button_h = (WINDOW_WIDTH - 200) // 2, (WINDOW_HEIGHT - 70) // 2, 200, 70
+
+        # Get mouse position and state
+        mouse_pos = pygame.mouse.get_pos()
+        mouse_click = pygame.mouse.get_pressed()
+
+        # Check if mouse is over the button
+        button_hover = button_x < mouse_pos[0] < button_x + button_w and button_y < mouse_pos[1] < button_y + button_h
+        
+        # Draw Start button
+        self.draw_button(button_x, button_y, button_w, button_h, "Start", button_hover)
+        
+        # Handle button click
+        if button_hover and mouse_click[0]:
+            self.current_state = GAMEPLAY
+
+        pygame.display.flip()
+
     def handle_events(self):
         """Handle game events like keyboard input and window closing"""
         for event in pygame.event.get():
@@ -49,25 +109,29 @@ class Game:
                 if event.key == pygame.K_ESCAPE:
                     pygame.quit()
                     sys.exit()
-                if event.key == pygame.K_SPACE:
+                if event.key == pygame.K_SPACE and self.current_state == GAMEPLAY:
                     self.wizard.sendBasicProj(self.projectiles)
 
                     
     def update(self, time, projectiles):
         """Update game state"""
-        self.wizard.update()
-        self.enemy.update(time, projectiles)
-        self.projectiles.update() 
+        if self.current_state == GAMEPLAY:
+            self.wizard.update()
+            self.enemy.update(time, projectiles)
+            self.projectiles.update()
     
     def render(self):
         """Render the game state to the screen"""
-        self.screen.fill(WHITE)
+        if self.current_state == MAIN_MENU:
+            self.main_menu()
+        elif self.current_state == GAMEPLAY:
+            self.screen.fill(WHITE)
         
-        self.enemy.draw(self.screen)
-        
-        self.wizard.draw(self.screen)
-        for projectile in self.projectiles:
-            projectile.draw(self.screen) 
+            self.enemy.draw(self.screen)
+
+            self.wizard.draw(self.screen)
+            for projectile in self.projectiles:
+                projectile.draw(self.screen) 
 
         pygame.display.flip()
     
