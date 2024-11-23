@@ -174,6 +174,16 @@ class Game:
                 if event.key == pygame.K_SPACE and self.current_state == GAMEPLAY:
                     self.wizard.sendBasicProj(self.projectiles)
 
+    def checkCollisions(self, time, projectiles):
+        projetilesList = projectiles.sprites()
+        for i, proj1 in enumerate(projetilesList):
+            for proj2 in projetilesList[i+1:]:
+                # Check for collision using rect first (fast)
+                if (proj1.projType == "enemyball" and proj2.projType == "fireball_head"):
+                    if proj1.rect.colliderect(proj2.rect):
+                        pygame.sprite.Sprite.kill(proj1)
+                        pygame.sprite.Sprite.kill(proj2)
+
                     
     def update(self, time, projectiles):
         """Update game state"""
@@ -181,6 +191,7 @@ class Game:
             self.wizard.update()
             self.enemy.update(time, projectiles)
             self.projectiles.update()
+            self.checkCollisions(time, projectiles)
     
     def render(self):
         """Render the game state to the screen"""
