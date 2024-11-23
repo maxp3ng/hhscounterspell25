@@ -22,6 +22,10 @@ class Projectile(pygame.sprite.Sprite):
 
         self.speed = 5
         self.projType = projType 
+
+
+        fireball_x = -260
+        fireball_y = -80
         if (projType == "fireball_head"):
             wizardsurf = load_scaled_image(os.path.join('static', 'img', 'fireball' , 'frame_0.png'), 0.2)
             self.image = wizardsurf
