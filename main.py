@@ -130,9 +130,10 @@ class Game:
                     
     def update(self):
         """Update game state"""
-        self.wizard.update()
-        self.enemy.update()
-        self.projectiles.update() 
+        if self.current_state == GAMEPLAY:
+            self.wizard.update()
+            self.enemy.update()
+            self.projectiles.update()
     
     def render(self):
         """Render the game state to the screen"""
