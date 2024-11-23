@@ -41,7 +41,7 @@ class Enemy(pygame.sprite.Sprite):
         pass
 
     def read_next_character(self, file, time):
-        if (time%30 == 0):
+        if (time%15 == 0):
             char = file.read(1)  # Read one character
             return char if char else None
         return None
