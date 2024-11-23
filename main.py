@@ -18,7 +18,7 @@ class Game:
     def __init__(self):
         # Create the game window
         self.screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
-        pygame.display.set_caption("My Game")
+        pygame.display.set_caption("Counterspell")
         
         # Set up the game clock
         self.clock = pygame.time.Clock()
@@ -29,10 +29,7 @@ class Game:
         
         # Game state
         self.running = True
-  
-    def sendBasicProj(self):
-        #self.projectile = Projectile(WINDOW_WIDTH//2,WINDOW_HEIGHT//2)
-        self.projExists = True
+
     
     def handle_events(self):
         """Handle game events like keyboard input and window closing"""
@@ -42,21 +39,22 @@ class Game:
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     self.running = False
+                if event.key == pygame.K_f:
+                    self.wizard.sendBasicProj(self.projectiles)
                     
     def update(self):
         """Update game state"""
-        # Update player position
         self.wizard.update()
+        self.projectiles.update() 
     
     def render(self):
         """Render the game state to the screen"""
-        # Clear the screen
         self.screen.fill(WHITE)
         
-        # Draw the player
         self.wizard.draw(self.screen)
-        
-        # Update the display
+        for projectile in self.projectiles:
+            projectile.draw(self.screen) 
+
         pygame.display.flip()
     
     def run(self):
