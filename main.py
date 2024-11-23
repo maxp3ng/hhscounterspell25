@@ -3,6 +3,7 @@ import sys
 from wizard import Wizard
 from sound import Sound
 from enemy import Enemy
+from collisionEffect import CollisionEffect
 
 # Initialize Pygame
 pygame.init()
@@ -60,7 +61,7 @@ class Game:
         self.running = True
         self.time = 0
         self.current_state = MAIN_MENU
-
+        self.collision_effects = CollisionEffect()
     
     def draw_gradient(self):
         """Draw a gradient background"""
@@ -176,16 +177,50 @@ class Game:
                 if event.key == pygame.K_SPACE and self.current_state == GAMEPLAY:
                     self.wizard.sendBasicProj(self.projectiles)
 
-    def checkCollisions(self, time, projectiles):
-        projetilesList = projectiles.sprites()
-        for i, proj1 in enumerate(projetilesList):
-            for proj2 in projetilesList[i+1:]:
-                # Check for collision using rect first (fast)
-                if (proj1.projType == "enemyball" and proj2.projType == "fireball_head"):
-                    if proj1.rect.colliderect(proj2.rect):
-                        pygame.sprite.Sprite.kill(proj1)
-                        pygame.sprite.Sprite.kill(proj2)
 
+    def checkCollisions(self, time, projectiles):
+        """Improved collision detection system"""
+        # Create groups for different projectile types
+        enemy_projectiles = []
+        player_projectiles = []
+        
+        # Sort projectiles into groups
+        for proj in projectiles:
+            if proj.projType == "enemyball":
+                enemy_projectiles.append(proj)
+            elif proj.projType == "fireball_head":
+                player_projectiles.append(proj)
+        
+        # Check collisions between groups
+        for enemy_proj in enemy_projectiles:
+            for player_proj in player_projectiles:
+                # First check if projectiles still exist (haven't been destroyed)
+                if enemy_proj.alive() and player_proj.alive():
+                    # Check for collision using rect
+                    if enemy_proj.rect.colliderect(player_proj.rect):
+                        # Play collision sound if you have one
+                        # self.sound.play_collision()
+                        
+                        # Optional: Create visual effect at collision point
+                        collision_x = (enemy_proj.rect.centerx + player_proj.rect.centerx) // 2
+                        collision_y = (enemy_proj.rect.centery + player_proj.rect.centery) // 2
+                        
+                        # Kill both projectiles
+                        enemy_proj.kill()
+                        player_proj.kill()
+                        
+                        # Optional: Add score or trigger other game events
+                        # self.score += 10
+                        
+        # Optional: Screen boundary cleanup
+        for proj in projectiles:
+            if proj.alive():  # Check if projectile still exists
+                # Remove projectiles that go off screen
+                if (proj.rect.right < 0 or 
+                    proj.rect.left > self.screen.get_width() or
+                    proj.rect.bottom < 0 or 
+                    proj.rect.top > self.screen.get_height()):
+                    proj.kill()
                     
     def update(self, time, projectiles):
         """Update game state"""
@@ -194,6 +229,12 @@ class Game:
             self.enemy.update(time, projectiles)
             self.projectiles.update()
             self.checkCollisions(time, projectiles)
+            if self.current_state == GAMEPLAY:
+                self.wizard.update()
+                self.enemy.update(time, projectiles)
+                self.projectiles.update()
+                self.checkCollisions(time, projectiles)
+                self.collision_effects.update()
     
     def render(self):
         """Render the game state to the screen"""
@@ -209,6 +250,7 @@ class Game:
             self.wizard.draw(self.screen)
             for projectile in self.projectiles:
                 projectile.draw(self.screen) 
+                self.collision_effects.draw(self.screen)
 
         pygame.display.flip()
     
