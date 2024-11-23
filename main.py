@@ -31,7 +31,9 @@ GAMEPLAY = 2
 currentState =  MAIN_MENU
 
 # Fonts
-FONT = pygame.font.Font("MightySouly-lxggD.ttf", 40)
+FONT = pygame.font.Font(pygame.font.get_default_font(), 40)
+dialogueFont = pygame.font.Font(None, 18)
+
 
 class Game:
     def __init__(self):
@@ -133,9 +135,27 @@ class Game:
         
         # Handle button click
         if button_hover and mouse_click[0]:
-            self.current_state = GAMEPLAY
+            self.currentLine = 0
+            self.current_state = DIALOGUE
 
         pygame.display.flip()
+
+    def dialogue(self):
+        self.dialogueText = [
+            "You have come far, my younger self. But there is still much you need to learn before you can take on the greater evil.",
+            "I don’t know if I can do this, Master. These spells… they’re too fast for me.",
+            "You must learn to keep up, or we both fail. This is not just a test of power—it’s a test of will. Protect yourself, protect me. Afterall, the only thing that separates us is time.",
+            "But what if I can’t…? What happens if I fail?",
+            "If I fail, you fail. If you fail, I fail. Our deaths would cause ripples in time and space itself.",
+            "I’ll try. For the sake of our world."
+        ]
+
+        screen.fill(WHITE)
+
+        if self.currentLine < len(self.dialogueText):
+            text_surface = dialogueFont.render(self.dialogueText[self.currentLine], True, BLACK)
+            text_rect = text_surface.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2))
+            screen.blit(text_surface, text_rect) 
 
     def handle_events(self):
         """Handle game events like keyboard input and window closing"""
@@ -147,6 +167,10 @@ class Game:
                 if event.key == pygame.K_ESCAPE:
                     pygame.quit()
                     sys.exit()
+                if event.key == pygame.K_SPACE and self.current_state == DIALOGUE:
+                    self.currentLine += 1
+                    if self.currentLine >= len(self.dialogueText):
+                        self.current_state = GAMEPLAY
                 if event.key == pygame.K_SPACE and self.current_state == GAMEPLAY:
                     self.wizard.sendBasicProj(self.projectiles)
 
@@ -162,6 +186,8 @@ class Game:
         """Render the game state to the screen"""
         if self.current_state == MAIN_MENU:
             self.main_menu()
+        elif self.current_state == DIALOGUE:
+            self.dialogue()
         elif self.current_state == GAMEPLAY:
             self.screen.fill(WHITE)
         
