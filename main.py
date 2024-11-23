@@ -85,3 +85,9 @@ def main():
 
 if __name__ == "__main__":
     main()
+    # RENDER YOUR GAME HERE
+    
+    pygame.display.flip()
+
+
+pygame.quit()
