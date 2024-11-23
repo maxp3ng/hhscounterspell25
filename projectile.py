@@ -12,39 +12,38 @@ def load_scaled_image(image_path, scale_factor=0.5):
     return pygame.transform.scale(image, (width, height))
 
 class Projectile(pygame.sprite.Sprite):
-    def __init__(self, x, y, projType):
+    def __init__(self, x, y, projType, direction):
         super().__init__()
         self.x = x
         self.y = y
         self.projType = projType
-        self.direction = random.random() * 6 - 3
+        self.direction = direction
         self.fireframe = 0
 
         self.speed = 5
-        
-        wizardsurf = load_scaled_image(os.path.join('static', 'img', 'fireball' , 'frame_0.png'), 0.2)
-        self.image = wizardsurf
+        self.projType = projType 
+        if (projType == "fireball_head"):
+            wizardsurf = load_scaled_image(os.path.join('static', 'img', 'fireball' , 'frame_0.png'), 0.2)
+            self.image = wizardsurf
+        elif (projType == "fireball_tail"):
+            wizardsurf = load_scaled_image(os.path.join('static', 'img', 'fireball' , 'frame_1.png'), 0.2)
+            self.image = pygame.transform.flip(wizardsurf, True, False)
+        elif (projType == "enemyball"):
+            wizardsurf = load_scaled_image(os.path.join('static', 'img', 'fireball' , 'frame_0.png'), 0.2)
+            self.image = pygame.transform.grayscale(wizardsurf)
+        else:
+            raise Exception("impossible ball type detected! ")
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
 
     def update(self):
-        """Update fireball to tail"""
-        frameslowdown =  40 #wait 5 ticks on each frame 
-        filename = 'frame_' + str(int(self.fireframe//frameslowdown))+ '.png'
-        fireballFrame = load_scaled_image(os.path.join('static', 'img', 'fireball' , filename),0.2)
-        self.image = fireballFrame 
-        self.fireframe = 0 if (self.fireframe == 1*frameslowdown) else self.fireframe + 1
-
-
-
         """Moves in an arc """
-        self.rect.x += 5
+        self.rect.x += -5 if (self.projType == "enemyball") else 5
         if (self.direction == "up"):
-            randomNum =  random.random() * self.direction 
-            self.rect.y += randomNum
+            self.rect.y += self.direction 
         else:
-            self.rect.y -= random.random() * self.direction
+            self.rect.y -= self.direction
            
     def draw(self, screen):
         """Draw the player to the screen"""

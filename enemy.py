@@ -3,16 +3,12 @@ import pygame
 import os
 import random
 
-file_path = "tempsong.txt" 
-file = open(file_path)
 
-WINDOW_WIDTH = 800
-WINDOW_HEIGHT = 600
 
 class Enemy(pygame.sprite.Sprite):
     projExists = False
 
-    def __init__(self, x, y):
+    def __init__(self, x, y, WINDOW_WIDTH, WINDOW_HEIGHT):
         super().__init__()
         # Create a simple rectangle for the player
         enemysurf = pygame.image.load(os.path.join('static', 'img', 'enemyfire' , 'frame_0_delay-0.1s.gif'))
@@ -21,31 +17,38 @@ class Enemy(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
+        self.WINDOW_HEIGHT = WINDOW_HEIGHT
+        self.WINDOW_WIDTH= WINDOW_WIDTH 
         
+        file_path = "tempsong.txt" 
+        self.file = open(file_path)
+
         # Movement speed
         self.speed = 5
         
     def sendBasicProj(self, projectiles):
         self.projExists = True
     
-        basic_projectile = Projectile(WINDOW_WIDTH//2+110,WINDOW_HEIGHT//2+80,"basic")
-        projectiles.add(basic_projectile)
 
-    def enemyProj(self, char):
+        enemyball_x = 300 
+        enemyball_y = -80
+        enemyball = Projectile(self.WINDOW_WIDTH//2+enemyball_x,self.WINDOW_HEIGHT//2+enemyball_y,"enemyball", 0)
+        projectiles.add(enemyball)
+
+    def enemyProj(self, char, projectiles):
         if (char == "x"):
-            self.sendBasicProj()
+            self.sendBasicProj(projectiles)
         pass
 
-    def read_next_character(file):
-        char = file.read(1)  # Read one character
+    def read_next_character(self, file, time):
+        char = file.read(time//10)  # Read one character
         return char if char else None
 
-    def update(self):
-        """Update player position based on keyboard input"""
-        keys = pygame.key.get_pressed()
+    def update(self, time, projectiles):
+        char = self.read_next_character(self.file, time)
+        self.enemyProj(char, projectiles)
+
         frameslowdown = 4 #wait 5 ticks on each frame 
-        #char = self.read_next_character(file)
-        #self.enemyProj(self, char)
         if (self.fireframe > 0):
             filename = 'frame_' + str(int(self.fireframe//frameslowdown))+ '.gif'
             enemysurf = pygame.image.load(os.path.join('static', 'img', 'enemyfire' , filename))
