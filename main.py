@@ -59,7 +59,6 @@ class Game:
                     pygame.quit()
                     sys.exit()
                 if event.key == pygame.K_SPACE:
-                    if screen == 
                     self.wizard.sendBasicProj(self.projectiles)
                     self.wizard.fireframe()
 
@@ -68,7 +67,7 @@ class Game:
         """Update game state"""
         self.wizard.update()
         self.enemy.update()
-        self.projectiles.update() 
+        self.projectiles.update()   
     
     def render(self):
         """Render the game state to the screen"""
