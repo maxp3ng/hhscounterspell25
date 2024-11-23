@@ -30,9 +30,9 @@ class Enemy(pygame.sprite.Sprite):
         self.projExists = True
     
 
-        enemyball_x = 100 
+        enemyball_x = 300 
         enemyball_y = -80
-        enemyball = Projectile(self.WINDOW_WIDTH-enemyball_x,self.WINDOW_HEIGHT//2+enemyball_y,"enemyball", 0)
+        enemyball = Projectile(self.WINDOW_WIDTH//2+enemyball_x,self.WINDOW_HEIGHT//2+enemyball_y,"enemyball", 0)
         projectiles.add(enemyball)
 
     def enemyProj(self, char, projectiles):
