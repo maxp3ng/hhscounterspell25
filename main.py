@@ -19,7 +19,6 @@ while running:
 
     # RENDER YOUR GAME HERE
 
-    # flip() the display to put your work on screen
     pygame.display.flip()
 
     clock.tick(60)  # limits FPS to 60
