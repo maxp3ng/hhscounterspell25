@@ -1,4 +1,5 @@
 from projectile import Projectile
+import random
 import pygame
 import os
 
@@ -8,7 +9,7 @@ WINDOW_HEIGHT = 600
 class Wizard(pygame.sprite.Sprite):
     projExists = False
 
-    def __init__(self, x, y):
+    def __init__(self, x, y, WINDOW_WIDTH, WINDOW_HEIGHT):
         super().__init__()
         # Create a simple rectangle for the player
         wizardsurf = pygame.image.load(os.path.join('static', 'img', 'wizardfire' , 'frame_0.gif'))
@@ -17,15 +18,24 @@ class Wizard(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
-        
+        self.WINDOW_HEIGHT = WINDOW_HEIGHT
+        self.WINDOW_WIDTH= WINDOW_WIDTH 
+
+
         # Movement speed
         self.speed = 5
         
     def sendBasicProj(self, projectiles):
         self.projExists = True
-    
-        basic_projectile = Projectile(WINDOW_WIDTH//2+110,WINDOW_HEIGHT//2+80,"basic")
-        projectiles.add(basic_projectile)
+        direction = 0#random.random() * 6 - 3 
+   
+        fireballDelay = 15
+        fireball_x = -260
+        fireball_y = -80
+        fireball_tail = Projectile(self.WINDOW_WIDTH//2+fireball_x,self.WINDOW_HEIGHT//2+fireball_y,"fireball_tail", direction)
+        fireball_head = Projectile(self.WINDOW_WIDTH//2+fireball_x+fireballDelay,self.WINDOW_HEIGHT//2+fireball_y,"fireball_head", direction)
+        projectiles.add(fireball_head)
+        projectiles.add(fireball_tail)
 
     def update(self):
         """Update wizard sprite on spacebar"""

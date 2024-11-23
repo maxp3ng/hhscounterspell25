@@ -43,18 +43,19 @@ class Game:
         self.clock = pygame.time.Clock()
         
         # Create the player at the center of the screen
-        self.wizard = Wizard(WINDOW_WIDTH // 4, WINDOW_HEIGHT // 3)
+        self.wizard = Wizard(WINDOW_WIDTH // 4, WINDOW_HEIGHT // 3, WINDOW_WIDTH, WINDOW_HEIGHT)
+
         self.projectiles = pygame.sprite.Group()
 
+        self.enemy = Enemy(WINDOW_WIDTH // 1.25, WINDOW_HEIGHT //3, WINDOW_WIDTH, WINDOW_HEIGHT)
         # Initialize sound
         self.sound = Sound()
         self.sound.background()  # Start playing music here
 
-        self.enemy = Enemy(WINDOW_WIDTH // 1.25, WINDOW_HEIGHT //3)
-        self.projectiles = pygame.sprite.Group()
         
         # Game state
         self.running = True
+        self.time = 0
         self.current_state = MAIN_MENU
 
     
@@ -119,11 +120,11 @@ class Game:
                     self.wizard.sendBasicProj(self.projectiles)
 
                     
-    def update(self):
+    def update(self, time, projectiles):
         """Update game state"""
         if self.current_state == GAMEPLAY:
             self.wizard.update()
-            self.enemy.update()
+            self.enemy.update(time, projectiles)
             self.projectiles.update()
     
     def render(self):
@@ -148,13 +149,14 @@ class Game:
             self.handle_events()
             
             # Update game state
-            self.update()
+            self.update(self.time, self.projectiles)
             
             # Render the frame
             self.render()
             
             # Maintain consistent frame rate
             self.clock.tick(FPS)
+            self.time += 1
 
 def main():
     # Create and run the game
