@@ -21,7 +21,7 @@ BG_COLOR_TOP = (60, 120, 180)
 BG_COLOR_BOTTOM = (30, 60, 90)
 BUTTON_COLOR = (255, 255, 255)
 BUTTON_HOVER_COLOR = (200, 200, 200)
-TEXT_COLOR = (0, 0, 0)
+TEXT_COLOR = (255, 51, 139)
 
 #Screen State
 MAIN_MENU = 0
@@ -31,7 +31,7 @@ GAMEPLAY = 2
 currentState =  MAIN_MENU
 
 # Fonts
-FONT = pygame.font.Font(pygame.font.get_default_font(), 40)
+FONT = pygame.font.Font("MightySouly-lxggD.ttf", 40)
 
 class Game:
     def __init__(self):
@@ -51,6 +51,10 @@ class Game:
         # Initialize sound
         self.sound = Sound()
         self.sound.background()  # Start playing music here
+
+        self.button_scale = 1.0  # Initial scale of the button
+        self.scale_speed = 0.1  # Speed of scaling
+
 
         
         # Game state
@@ -75,14 +79,41 @@ class Game:
         pygame.draw.rect(self.screen, color, (x, y, w, h), border_radius=10)
         button_text = FONT.render(text, True, TEXT_COLOR)
         self.screen.blit(button_text, (x + (w - button_text.get_width()) // 2, y + (h - button_text.get_height()) // 2))
+        """Draw the start button with smooth hover enlargement"""
+        # Adjust scale factor for smooth transitions
+        target_scale = 1.1 if hover else 1.0
+        self.button_scale += (target_scale - self.button_scale) * self.scale_speed
+
+        # Calculate scaled button dimensions
+        scaled_w = int(w * self.button_scale)
+        scaled_h = int(h * self.button_scale)
+        scaled_x = x - (scaled_w - w) // 2
+        scaled_y = y - (scaled_h - h) // 2
+
+        # Draw the button with the scaled dimensions
+        color = BUTTON_HOVER_COLOR if hover else BUTTON_COLOR
+        pygame.draw.rect(self.screen, color, (scaled_x, scaled_y, scaled_w, scaled_h), border_radius=10)
+
+        # Adjust font size based on scale
+        font_size = int(40 * self.button_scale)
+        button_font = pygame.font.Font("MightySouly-lxggD.ttf", font_size)
+
+        # Render the text and center it on the button
+        button_text = button_font.render(text, True, TEXT_COLOR)
+        text_x = scaled_x + (scaled_w - button_text.get_width()) // 2
+        text_y = scaled_y + (scaled_h - button_text.get_height()) // 2
+        self.screen.blit(button_text, (text_x, text_y))
+        text_y = y + (h - button_text.get_height()) // 2
+        self.screen.blit(button_text, (text_x, text_y))
+
 
     def main_menu(self):
         # Set background color to black
         self.screen.fill(BLACK)
 
-        # Title settings
-        title_font = pygame.font.Font(pygame.font.get_default_font(), 100)
-        title_text = title_font.render("COUNTERSPELL", True, (255, 255, 255))
+        # Title settings using custom font
+        title_font = pygame.font.Font("MightySouly-lxggD.ttf", 100)  # Use custom font here
+        title_text = title_font.render("COUNTERSPELL", True, TEXT_COLOR)  # White text for contrast
         title_x = (WINDOW_WIDTH - title_text.get_width()) // 2
         title_y = WINDOW_HEIGHT // 6
         self.screen.blit(title_text, (title_x, title_y))
