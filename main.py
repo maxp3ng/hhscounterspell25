@@ -18,7 +18,7 @@ while running:
     screen.fill("purple")
 
     # RENDER YOUR GAME HERE
-
+    
     pygame.display.flip()
 
     clock.tick(60)  # limits FPS to 60
