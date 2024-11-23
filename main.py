@@ -26,7 +26,7 @@ class Game:
         self.clock = pygame.time.Clock()
         
         # Create the player at the center of the screen
-        self.wizard = Wizard(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2)
+        self.wizard = Wizard(WINDOW_WIDTH // 4, WINDOW_HEIGHT // 3)
         self.projectiles = pygame.sprite.Group()
         
         # Game state
@@ -43,7 +43,7 @@ class Game:
                 if event.key == pygame.K_ESCAPE:
                     pygame.quit()
                     sys.exit()
-                if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
                     self.wizard.sendBasicProj(self.projectiles)
 
                     
