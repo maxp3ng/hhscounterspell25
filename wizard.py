@@ -28,8 +28,7 @@ class Wizard(pygame.sprite.Sprite):
         projectiles.add(basic_projectile)
 
     def update(self):
-        """Update player position based on keyboard input"""
-        keys = pygame.key.get_pressed()
+        """Update wizard sprite on spacebar"""
         frameslowdown = 4 #wait 5 ticks on each frame 
         if (self.fireframe > 0):
             filename = 'frame_' + str(int(self.fireframe//frameslowdown))+ '.gif'
@@ -39,5 +38,5 @@ class Wizard(pygame.sprite.Sprite):
             
            
     def draw(self, screen):
-        """Draw the player to the screen"""
+        """Update self on screen"""
         screen.blit(self.image, self.rect)
