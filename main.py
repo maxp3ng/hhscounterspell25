@@ -1,6 +1,7 @@
 import pygame
 import sys
 from wizard import Wizard
+from sound import Sound
 
 # Initialize Pygame
 pygame.init()
@@ -26,6 +27,10 @@ class Game:
         # Create the player at the center of the screen
         self.wizard = Wizard(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2)
         self.projectiles = pygame.sprite.Group()
+        
+        # Initialize sound and start background music
+        self.sound = Sound()
+        self.sound.background()  # Start background music here
         
         # Game state
         self.running = True
