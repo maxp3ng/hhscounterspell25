@@ -32,7 +32,7 @@ currentState =  MAIN_MENU
 
 # Fonts
 FONT = pygame.font.Font(pygame.font.get_default_font(), 40)
-dialogueFont = pygame.font.Font(None, 18)
+dialogueFont = pygame.font.Font(None, 24)
 
 
 class Game:
