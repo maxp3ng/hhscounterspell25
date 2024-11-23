@@ -17,6 +17,13 @@ FPS = 60
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 
+#Screen State
+MAIN_MENU = 0
+DIALOGUE = 1
+GAMEPLAY = 2
+
+currentState =  MAIN_MENU
+
 class Game:
     def __init__(self):
         # Create the game window
@@ -37,6 +44,10 @@ class Game:
         self.running = True
 
     
+    def main_menu():
+        screen.fill(WHITE)
+
+
     def handle_events(self):
         """Handle game events like keyboard input and window closing"""
         for event in pygame.event.get():
@@ -48,7 +59,9 @@ class Game:
                     pygame.quit()
                     sys.exit()
                 if event.key == pygame.K_SPACE:
+                    if screen == 
                     self.wizard.sendBasicProj(self.projectiles)
+                    self.wizard.fireframe()
 
                     
     def update(self):
@@ -62,7 +75,7 @@ class Game:
         self.screen.fill(WHITE)
         
         self.enemy.draw(self.screen)
-        
+
         self.wizard.draw(self.screen)
         for projectile in self.projectiles:
             projectile.draw(self.screen) 
