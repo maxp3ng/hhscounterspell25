@@ -110,22 +110,6 @@ class Game:
                     sys.exit()
                 if event.key == pygame.K_SPACE and self.current_state == GAMEPLAY:
                     self.wizard.sendBasicProj(self.projectiles)
-                    self.wizard.fireframe()
-
-
-    def handle_events(self):
-        """Handle game events like keyboard input and window closing"""
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    pygame.quit()
-                    sys.exit()
-                if event.key == pygame.K_SPACE:
-                    self.wizard.sendBasicProj(self.projectiles)
-                    self.wizard.fireframe()
 
                     
     def update(self):
