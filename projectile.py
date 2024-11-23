@@ -1,4 +1,5 @@
 import pygame
+import random
 
 
 class Projectile(pygame.sprite.Sprite):
@@ -7,6 +8,7 @@ class Projectile(pygame.sprite.Sprite):
         self.x = x
         self.y = y
         self.projType = projType
+        self.direction = random.random() * 6 - 3
 
         self.speed = 5
         
@@ -18,9 +20,13 @@ class Projectile(pygame.sprite.Sprite):
         self.rect.y = y
 
     def update(self):
-        """Moves in an arc TODO"""
+        """Moves in an arc """
         self.rect.x += 5
-
+        if (self.direction == "up"):
+            randomNum =  random.random() * self.direction 
+            self.rect.y += randomNum
+        else:
+            self.rect.y -= random.random() * self.direction
            
     def draw(self, screen):
         """Draw the player to the screen"""

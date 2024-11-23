@@ -8,7 +8,7 @@ pygame.init()
 # Constants
 WINDOW_WIDTH = 800
 WINDOW_HEIGHT = 600
-FPS = 60
+FPS = 60 
 
 # Colors
 BLACK = (0, 0, 0)
@@ -39,8 +39,9 @@ class Game:
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     self.running = False
-                if event.key == pygame.K_f:
+                if event.key == pygame.K_SPACE:
                     self.wizard.sendBasicProj(self.projectiles)
+                    self.wizard.fireframe = (self.wizard.fireframe) if (self.wizard.fireframe > 0) else 1
                     
     def update(self):
         """Update game state"""

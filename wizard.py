@@ -11,7 +11,8 @@ class Wizard(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
         # Create a simple rectangle for the player
-        wizardsurf = pygame.image.load(os.path.join('static', 'img', 'wizard.png'))
+        wizardsurf = pygame.image.load(os.path.join('static', 'img', 'wizardfire' , 'frame_0.gif'))
+        self.fireframe = 0
         self.image = wizardsurf
         self.rect = self.image.get_rect()
         self.rect.x = x
@@ -23,15 +24,19 @@ class Wizard(pygame.sprite.Sprite):
     def sendBasicProj(self, projectiles):
         self.projExists = True
     
-        basic_projectile = Projectile(WINDOW_WIDTH//2,WINDOW_HEIGHT//2,"basic")
+        basic_projectile = Projectile(WINDOW_WIDTH//2+110,WINDOW_HEIGHT//2+80,"basic")
         projectiles.add(basic_projectile)
 
     def update(self):
         """Update player position based on keyboard input"""
         keys = pygame.key.get_pressed()
-
-        if keys[pygame.K_SPACE]:
-            pass
+        frameslowdown = 4 #wait 5 ticks on each frame 
+        if (self.fireframe > 0):
+            filename = 'frame_' + str(int(self.fireframe//frameslowdown))+ '.gif'
+            wizardsurf = pygame.image.load(os.path.join('static', 'img', 'wizardfire' , filename))
+            self.image = wizardsurf
+            self.fireframe = 0 if (self.fireframe == 7*frameslowdown) else self.fireframe + 1
+            
            
     def draw(self, screen):
         """Draw the player to the screen"""
