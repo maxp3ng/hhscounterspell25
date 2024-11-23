@@ -76,8 +76,15 @@ class Game:
         self.screen.blit(button_text, (x + (w - button_text.get_width()) // 2, y + (h - button_text.get_height()) // 2))
 
     def main_menu(self):
-        """Display the main menu"""
-        self.draw_gradient()
+        # Set background color to black
+        self.screen.fill(BLACK)
+
+        # Title settings
+        title_font = pygame.font.Font(pygame.font.get_default_font(), 100)
+        title_text = title_font.render("COUNTERSPELL", True, (255, 255, 255))
+        title_x = (WINDOW_WIDTH - title_text.get_width()) // 2
+        title_y = WINDOW_HEIGHT // 6
+        self.screen.blit(title_text, (title_x, title_y))
 
         # Button details
         button_x, button_y, button_w, button_h = (WINDOW_WIDTH - 200) // 2, (WINDOW_HEIGHT - 70) // 2, 200, 70
