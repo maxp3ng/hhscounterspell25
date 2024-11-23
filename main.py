@@ -21,7 +21,7 @@ BG_COLOR_TOP = (60, 120, 180)
 BG_COLOR_BOTTOM = (30, 60, 90)
 BUTTON_COLOR = (255, 255, 255)
 BUTTON_HOVER_COLOR = (200, 200, 200)
-TEXT_COLOR = (0, 0, 0)
+TEXT_COLOR = (255, 51, 139)
 
 #Screen State
 MAIN_MENU = 0
@@ -32,6 +32,8 @@ currentState =  MAIN_MENU
 
 # Fonts
 FONT = pygame.font.Font(pygame.font.get_default_font(), 40)
+dialogueFont = pygame.font.Font(None, 18)
+
 
 class Game:
     def __init__(self):
@@ -51,6 +53,10 @@ class Game:
         # Initialize sound
         self.sound = Sound()
         self.sound.background()  # Start playing music here
+
+        self.button_scale = 1.0  # Initial scale of the button
+        self.scale_speed = 0.1  # Speed of scaling
+
 
         
         # Game state
@@ -75,10 +81,44 @@ class Game:
         pygame.draw.rect(self.screen, color, (x, y, w, h), border_radius=10)
         button_text = FONT.render(text, True, TEXT_COLOR)
         self.screen.blit(button_text, (x + (w - button_text.get_width()) // 2, y + (h - button_text.get_height()) // 2))
+        """Draw the start button with smooth hover enlargement"""
+        # Adjust scale factor for smooth transitions
+        target_scale = 1.1 if hover else 1.0
+        self.button_scale += (target_scale - self.button_scale) * self.scale_speed
+
+        # Calculate scaled button dimensions
+        scaled_w = int(w * self.button_scale)
+        scaled_h = int(h * self.button_scale)
+        scaled_x = x - (scaled_w - w) // 2
+        scaled_y = y - (scaled_h - h) // 2
+
+        # Draw the button with the scaled dimensions
+        color = BUTTON_HOVER_COLOR if hover else BUTTON_COLOR
+        pygame.draw.rect(self.screen, color, (scaled_x, scaled_y, scaled_w, scaled_h), border_radius=10)
+
+        # Adjust font size based on scale
+        font_size = int(40 * self.button_scale)
+        button_font = pygame.font.Font("MightySouly-lxggD.ttf", font_size)
+
+        # Render the text and center it on the button
+        button_text = button_font.render(text, True, TEXT_COLOR)
+        text_x = scaled_x + (scaled_w - button_text.get_width()) // 2
+        text_y = scaled_y + (scaled_h - button_text.get_height()) // 2
+        self.screen.blit(button_text, (text_x, text_y))
+        text_y = y + (h - button_text.get_height()) // 2
+        self.screen.blit(button_text, (text_x, text_y))
+
 
     def main_menu(self):
-        """Display the main menu"""
-        self.draw_gradient()
+        # Set background color to black
+        self.screen.fill(BLACK)
+
+        # Title settings using custom font
+        title_font = pygame.font.Font("MightySouly-lxggD.ttf", 100)  # Use custom font here
+        title_text = title_font.render("COUNTERSPELL", True, TEXT_COLOR)  # White text for contrast
+        title_x = (WINDOW_WIDTH - title_text.get_width()) // 2
+        title_y = WINDOW_HEIGHT // 6
+        self.screen.blit(title_text, (title_x, title_y))
 
         # Button details
         button_x, button_y, button_w, button_h = (WINDOW_WIDTH - 200) // 2, (WINDOW_HEIGHT - 70) // 2, 200, 70
@@ -95,9 +135,27 @@ class Game:
         
         # Handle button click
         if button_hover and mouse_click[0]:
-            self.current_state = GAMEPLAY
+            self.currentLine = 0
+            self.current_state = DIALOGUE
 
         pygame.display.flip()
+
+    def dialogue(self):
+        self.dialogueText = [
+            "You have come far, my younger self. But there is still much you need to learn before you can take on the greater evil.",
+            "I don’t know if I can do this, Master. These spells… they’re too fast for me.",
+            "You must learn to keep up, or we both fail. This is not just a test of power—it’s a test of will. Protect yourself, protect me. Afterall, the only thing that separates us is time.",
+            "But what if I can’t…? What happens if I fail?",
+            "If I fail, you fail. If you fail, I fail. Our deaths would cause ripples in time and space itself.",
+            "I’ll try. For the sake of our world."
+        ]
+
+        screen.fill(WHITE)
+
+        if self.currentLine < len(self.dialogueText):
+            text_surface = dialogueFont.render(self.dialogueText[self.currentLine], True, BLACK)
+            text_rect = text_surface.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2))
+            screen.blit(text_surface, text_rect) 
 
     def handle_events(self):
         """Handle game events like keyboard input and window closing"""
@@ -109,6 +167,10 @@ class Game:
                 if event.key == pygame.K_ESCAPE:
                     pygame.quit()
                     sys.exit()
+                if event.key == pygame.K_SPACE and self.current_state == DIALOGUE:
+                    self.currentLine += 1
+                    if self.currentLine >= len(self.dialogueText):
+                        self.current_state = GAMEPLAY
                 if event.key == pygame.K_SPACE and self.current_state == GAMEPLAY:
                     self.wizard.sendBasicProj(self.projectiles)
 
@@ -135,6 +197,8 @@ class Game:
         """Render the game state to the screen"""
         if self.current_state == MAIN_MENU:
             self.main_menu()
+        elif self.current_state == DIALOGUE:
+            self.dialogue()
         elif self.current_state == GAMEPLAY:
             self.screen.fill(WHITE)
         
