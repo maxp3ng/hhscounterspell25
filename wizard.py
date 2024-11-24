@@ -23,7 +23,7 @@ class Wizard(pygame.sprite.Sprite):
 
 
         # Movement speed
-        self.speed = 5
+        self.speed = 15
         
     def sendBasicProj(self, projectiles):
         self.projExists = True

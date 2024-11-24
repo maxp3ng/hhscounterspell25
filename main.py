@@ -188,6 +188,7 @@ class Game:
                         self.sound.background()  # Start playing music here
                         self.current_state = GAMEPLAY
                         self.time = 0
+                        
                 if event.key == pygame.K_SPACE and self.current_state == GAMEPLAY:
                     self.wizard.sendBasicProj(self.projectiles)
     def checkCollisions(self, time, projectiles):

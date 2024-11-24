@@ -30,7 +30,7 @@ class Enemy(pygame.sprite.Sprite):
         file_path = "tempsong.txt" 
         self.file = open(file_path)
         # Movement speed
-        self.speed = 5
+        self.speed = 15
         
         # Add alive status
         self.is_alive = True
@@ -51,7 +51,7 @@ class Enemy(pygame.sprite.Sprite):
         pass
 
     def read_next_character(self, file, time):
-        if (time%30 == 0):
+        if (time%10 == 0):
             char = file.read(1)  # Read one character
             return char if char else None
         return None
