@@ -17,7 +17,7 @@ class Projectile(pygame.sprite.Sprite):
         self.projType = projType
         self.direction = direction
         self.fireframe = 0
-        self.speed = 5
+        self.speed = 25
         
         # Initialize position history for head projectiles
         self.position_history = deque(maxlen=3)  # Reduced history length for closer following
@@ -51,7 +51,7 @@ class Projectile(pygame.sprite.Sprite):
         """Moves in an arc"""
         if self.projType == "fireball_head":
             # Update head position first
-            self.rect.x += 5
+            self.rect.x += 15
             if self.direction == "up":
                 self.rect.y += self.direction
             else:
@@ -67,7 +67,7 @@ class Projectile(pygame.sprite.Sprite):
                 self.tail.rect.y = self.rect.y
                 
         elif self.projType == "enemyball":
-            self.rect.x -= 5
+            self.rect.x -= 25
             if self.direction == "up":
                 self.rect.y += self.direction
             else:

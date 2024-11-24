@@ -30,7 +30,7 @@ class Enemy(pygame.sprite.Sprite):
         file_path = "tempsong.txt" 
         self.file = open(file_path)
         # Movement speed
-        self.speed = 15
+        self.speed = 25
         
         # Add alive status
         self.is_alive = True
